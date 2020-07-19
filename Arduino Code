@@ -1,0 +1,105 @@
+const int latch = 7;      
+const int clocky = 9;
+const int shift_data  =11;
+const int write_enable = 6;
+
+void write_zero(){
+  for(int i = 0; i < 8192; i++){
+    shiftOut(shift_data, clocky, MSBFIRST, i >> 8);
+    shiftOut(shift_data, clocky, MSBFIRST, i);
+    shiftOut(shift_data, clocky, MSBFIRST, 0x00);
+  
+    digitalWrite(latch, LOW);
+    digitalWrite(latch, HIGH);    //low edge trigger, provide an output to all the registers
+    delay(50);
+    digitalWrite(latch, LOW);
+
+  //digitalWrite(chip_enable, LOW);   //chip enable must be low all the time 
+  //digitalWrite(out_enable, HIGH);   //output enable must be high all the time
+
+    digitalWrite(write_enable, HIGH);
+    digitalWrite(write_enable, LOW);       //high to low > latch address
+    delay(50);
+    digitalWrite(write_enable, HIGH);      //low to high > latch shift_data
+    delay(10);
+    }
+}
+void write_one(){
+ for(int i = 0; i < 8192; i++){
+    shiftOut(shift_data, clocky, MSBFIRST, i >> 8);
+    shiftOut(shift_data, clocky, MSBFIRST, i);
+    shiftOut(shift_data, clocky, MSBFIRST, 0xff);
+  
+  digitalWrite(latch, LOW);
+  digitalWrite(latch, HIGH);    //low edge trigger, provide an output to all the registers
+  delay(50);
+  digitalWrite(latch, LOW);
+
+ 
+
+  digitalWrite(write_enable, HIGH);
+  digitalWrite(write_enable, LOW);       //high to low > latch address
+  delay(50);
+  digitalWrite(write_enable, HIGH);      //low to high > latch shift_data
+  delay(10);
+}
+}
+
+void write_random(){
+   for(int i = 0; i < 8192; i++){
+    shiftOut(shift_data, clocky, MSBFIRST, i >> 8);
+    shiftOut(shift_data, clocky, MSBFIRST, i);
+    shiftOut(shift_data, clocky, MSBFIRST, 0x55);
+  
+    digitalWrite(latch, LOW);
+    digitalWrite(latch, HIGH);    //low edge trigger, provide an output to all the registers
+    delay(50);
+    digitalWrite(latch, LOW);
+
+    digitalWrite(write_enable, HIGH);
+    digitalWrite(write_enable, LOW);       //high to low > latch address
+    delay(50);
+    digitalWrite(write_enable, HIGH);      //low to high > latch shift_data
+    delay(10);
+  }
+}
+
+void write_data(int base[]){
+  for(int i = 0; i < 7; i++){
+    shiftOut(shift_data, clocky, MSBFIRST, i >> 8);
+    shiftOut(shift_data, clocky, MSBFIRST, i);
+    shiftOut(shift_data, clocky, MSBFIRST, base[i]);
+  
+    digitalWrite(latch, LOW);
+    digitalWrite(latch, HIGH);    //low edge trigger, provide an output to all the registers
+    delay(50);
+    digitalWrite(latch, LOW);
+
+    digitalWrite(write_enable, HIGH);
+    digitalWrite(write_enable, LOW);       //high to low > latch address
+    delay(50);
+    digitalWrite(write_enable, HIGH);      //low to high > latch shift_data
+    delay(10);
+  }
+}
+
+
+
+}
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(latch, OUTPUT);
+  pinMode(clocky, OUTPUT);
+  pinMode(shift_data, OUTPUT);
+ // pinMode(chip_enable, OUTPUT);
+ // pinMode(out_enable, OUTPUT);
+  pinMode(write_enable, OUTPUT);
+
+  //write_random();
+
+  int base[7] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+  write_data(base);
+}
+
+void loop() {
+}
